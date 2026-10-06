@@ -111,4 +111,27 @@ $$;
 revoke all on function public.send_like_and_match(uuid,text) from public;
 grant execute on function public.send_like_and_match(uuid,text) to authenticated;
 
+create table if not exists passes (
+  from_user uuid not null references profiles(id) on delete cascade,
+  to_user uuid not null references profiles(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (from_user, to_user)
+);
+
+alter table passes enable row level security;
+create policy passes_own on passes for all using (from_user = auth.uid()) with check (from_user = auth.uid());
+
+create or replace function public.record_pass(p_to_user uuid)
+returns void
+language sql
+security definer
+set search_path = public
+as $
+  insert into passes(from_user,to_user)
+  values(auth.uid(),p_to_user)
+  on conflict do nothing;
+$;
+revoke all on function public.record_pass(uuid) from public;
+grant execute on function public.record_pass(uuid) to authenticated;
+
 alter table matches enable row level security;
