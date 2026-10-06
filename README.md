@@ -1,20 +1,19 @@
-# Pace Match
+# RunDate
 
-App de namoro para o público de corrida. A mecânica é a do Tinder: foto, GPS, raio e like mútuo.
+Namoro para quem corre. A interface e a lógica seguem o que o Tinder faz bem: card em tela cheia, swipe, raio por GPS e match só quando os dois curtem.
+
+## Marca
+
+Logo e cores do arquivo de marca: navy, vermelho date, laranja e amarelo da chama.
 
 ## Cadastro
 
-Obrigatório para abrir o deck:
+Obrigatório antes do deck:
 
-- Nome
+- Nome, idade, gênero e gênero buscado
 - Pelo menos 3 fotos
-- Gênero e gênero que busca
-- Idade
-- Prova favorita e há quanto tempo corre
-- Hobby e um texto sobre a pessoa
+- Prova favorita, tempo de corrida, hobby e texto sobre a pessoa
 - GPS do celular
 - Raio de 0 a 50 km
 
-## Demo
-
-Abra `index.html`. Sem as 3 fotos e sem o GPS, o deck não abre.
+Abra `index.html`.
