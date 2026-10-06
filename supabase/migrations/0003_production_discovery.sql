@@ -27,7 +27,7 @@ returns table (
   bio text,
   hobbies text[],
   area_label text,
-  photo_url text
+  photo_path text
 )
 language sql
 security definer
@@ -35,7 +35,7 @@ set search_path = public
 as $$
   select p.id, p.name, p.birth_date, p.gender, p.bio, p.hobbies, p.area_label,
          (
-           select storage.get_public_url('profile-photos', ph.storage_path)
+           select ph.storage_path
            from photos ph
            where ph.user_id = p.id
            order by ph.position
