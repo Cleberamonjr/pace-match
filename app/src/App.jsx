@@ -25,6 +25,7 @@ export default function App() {
   const [error, setError] = useState("");
 
   useEffect(() => { (async () => { const session = await repo.session(); if (session) { setMe({ ...empty, ...session.me }); setMatches(session.matches || []); setReady(true); } else track("signup_started"); })(); }, [repo]);
+  useEffect(() => { if (ready) refresh(me); }, [ready, me.radiusKm, me.ageMin, me.ageMax, me.seeking, me.blocked, matches]);
 
   async function refresh(next = me) {
     const deck = await repo.deck({ ...next, hobbies: next.hobbies.split(",").map(s => s.trim()).filter(Boolean) });
@@ -36,6 +37,7 @@ export default function App() {
   async function finish() {
     if (!me.gps) { setError("GPS é obrigatório. A tela só mostra a distância, nunca a coordenada."); return; }
     if (me.photos.length < 3) { setError("São necessárias 3 fotos."); return; }
+    await repo.saveProfile(me);
     setReady(true);
     track("signup_completed");
     track("location_enabled");
@@ -49,7 +51,9 @@ export default function App() {
     const result = await repo.like(me, person, kind);
     if (result.matched) {
       track("match_created");
-      setMatches(list => [...list, person]);
+      const nextMatches = [...matches, person];
+      setMatches(nextMatches);
+      await repo.saveMatches(nextMatches);
       setMatch(person);
     }
   }
