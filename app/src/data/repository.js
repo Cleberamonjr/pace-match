@@ -46,10 +46,10 @@ function supabaseRepository(supabase) {
       const { data, error } = await supabase.from("profiles").select("*").eq("id", session.user.id).maybeSingle();
       if (error) throw error;
       if (!data) return { auth: session, me: null, matches: [] };
-      const [{ data: prefs }, { data: sport }, { data: photos }] = await Promise.all([
+      const [{ data: prefs }, { data: sport }, { data: photos }, { data: matchRows }] = await Promise.all([
         supabase.from("preferences").select("*").eq("user_id", session.user.id).maybeSingle(),
         supabase.from("sport_profiles").select("*").eq("user_id", session.user.id).maybeSingle(),
-        supabase.from("photos").select("*").eq("user_id", session.user.id).order("position")
+        supabase.from("photos").select("*").eq("user_id", session.user.id).order("position"),\n        supabase.rpc("my_matches")
       ]);
       return {
         auth: session,
