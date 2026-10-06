@@ -75,6 +75,7 @@ function normalizeProfile(data, id, photos = []) {
   return {
     ...data,
     id,
+    discoverableGenders: data.discoverableGenders || [],
     age: ageFromBirthDate(data.birthDate),
     hobbies: Array.isArray(data.hobbies) ? data.hobbies.join(", ") : "",
     photo: data.photoUrls?.[0] || photos[0]?.url || "",
@@ -123,7 +124,7 @@ function firebaseRepository({ auth, db, storage }) {
         bio: profile.bio || "",
         area: profile.areaLabel || "",
         gps: Boolean(profile.geo),
-        coords: null,
+        coords: profile.geo ? { latitude: profile.geo.lat, longitude: profile.geo.lng } : null,
         blocked: []
       },
       matches: await listMatches(user.uid)
@@ -231,6 +232,7 @@ function firebaseRepository({ auth, db, storage }) {
         ageMin: Number(me.ageMin),
         ageMax: Number(me.ageMax),
         radiusKm: Number(me.radiusKm),
+        discoverableGenders: me.seeking === "todos" ? ["mulher", "homem", "não-binário"] : [me.seeking],
         intention: me.intention || "",
         sportMatters: Boolean(me.sportMatters)
       }, { merge: true });
@@ -275,6 +277,7 @@ function firebaseRepository({ auth, db, storage }) {
       return profilesSnap.docs.map(d => normalizeProfile(d.data(), d.id))
         .filter(p => !excluded.has(p.id))
         .filter(p => seeking.has(p.gender))
+        .filter(p => p.discoverableGenders.length === 0 || p.discoverableGenders.includes(next.gender))
         .filter(p => p.age >= mePrefs.ageMin && p.age <= mePrefs.ageMax)
         .filter(p => {
           const d = distanceKm(myGeo, p.geo);
