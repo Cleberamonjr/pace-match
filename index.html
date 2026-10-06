@@ -15,7 +15,7 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: #070908; color: var(--paper); font-family: Outfit, sans-serif; }
   body { display: grid; place-items: center; }
-  button, input { font-family: inherit; }
+  button, input, select, textarea { font-family: inherit; }
   button { cursor: pointer; }
   .stage {
     width: min(430px, 100vw); height: min(920px, 100dvh); position: relative; overflow: hidden;
@@ -31,17 +31,23 @@
   .word { font-family: Fraunces, serif; font-size: 22px; letter-spacing: -.03em; }
   .word span { color: var(--volt); }
   .ghost { background: transparent; color: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; font-size: 13px; }
-  .hero { margin: 8px 22px 0; border-radius: 22px; overflow: hidden; height: 168px; position: relative; background: #111 url("imagine_images/RMNJN.jpg") center/cover no-repeat; }
+  .hero { margin: 8px 22px 0; border-radius: 22px; overflow: hidden; height: 150px; position: relative; background: #111 url("imagine_images/RMNJN.jpg") center/cover no-repeat; }
   .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(16,20,16,.05), rgba(16,20,16,.78)); }
   .hero p { position: absolute; left: 16px; right: 16px; bottom: 14px; z-index: 1; margin: 0; font-family: Fraunces, serif; font-size: 26px; line-height: 1.05; letter-spacing: -.03em; }
-  .pad { padding: 18px 22px 110px; overflow: auto; }
-  h1 { font-family: Fraunces, serif; font-weight: 500; letter-spacing: -.03em; font-size: 38px; line-height: .95; margin: 18px 0 8px; }
-  .lede { color: var(--paper-dim); font-size: 15.5px; line-height: 1.45; margin: 0 0 18px; }
+  .pad { padding: 8px 22px 110px; overflow: auto; }
+  h1 { font-family: Fraunces, serif; font-weight: 500; letter-spacing: -.03em; font-size: 34px; line-height: .95; margin: 12px 0 8px; }
+  .lede { color: var(--paper-dim); font-size: 15px; line-height: 1.45; margin: 0 0 14px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { border: 1px solid var(--line); background: rgba(255,255,255,.03); color: var(--paper); border-radius: 999px; padding: 10px 14px; font-size: 14px; }
   .chip.on { background: var(--paper); color: var(--ink); border-color: var(--paper); }
-  label { display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--sage); margin-bottom: 8px; }
+  label { display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--sage); margin: 14px 0 8px; }
+  input[type="text"], input[type="number"], select, textarea {
+    width: 100%; background: var(--ink-2); color: var(--paper); border: 1px solid var(--line);
+    border-radius: 14px; padding: 14px; font-size: 16px; outline: none;
+  }
+  textarea { min-height: 96px; resize: vertical; }
   input[type="range"] { width: 100%; accent-color: #d7f26a; }
+  .err { color: #ff8d7a; font-size: 13px; min-height: 18px; margin: 8px 0 0; }
   .primary, .secondary { border: 0; border-radius: 16px; padding: 16px 18px; font-size: 16px; font-weight: 520; }
   .primary { background: var(--volt); color: #17200d; }
   .secondary { background: transparent; color: var(--paper); border: 1px solid var(--line); }
@@ -51,6 +57,11 @@
   .nav button.on { color: var(--volt); }
   .nav svg { width: 20px; height: 20px; }
   .dot { position: absolute; top: 4px; right: 22px; min-width: 16px; height: 16px; border-radius: 99px; background: var(--coral); color: white; font-size: 10px; display: grid; place-items: center; padding: 0 4px; }
+  .photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .slot { aspect-ratio: 3/4; border-radius: 16px; border: 1px dashed var(--line); background: var(--ink-2); display: grid; place-items: center; overflow: hidden; position: relative; color: var(--sage); font-size: 12px; }
+  .slot img { width: 100%; height: 100%; object-fit: cover; }
+  .slot button { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border: 0; border-radius: 50%; background: rgba(0,0,0,.65); color: white; }
+  .file { display: none; }
   .deck { position: relative; height: 500px; margin: 8px 22px 0; }
   .card { position: absolute; inset: 0; border-radius: 28px; overflow: hidden; background: #111; box-shadow: 0 18px 40px rgba(0,0,0,.35); transform-origin: 50% 100%; touch-action: none; user-select: none; }
   .card.back { transform: scale(.96) translateY(14px); filter: brightness(.72); pointer-events: none; }
@@ -87,21 +98,24 @@
   .bubble { background: var(--ink-2); border-radius: 16px 16px 16px 6px; padding: 12px 14px; margin: 8px 0; max-width: 86%; font-size: 14.5px; line-height: 1.4; }
   .bubble.me { margin-left: auto; background: #2c3820; border-radius: 16px 16px 6px 16px; }
   .composer { display: flex; gap: 8px; padding: 0 16px 20px; }
-  .composer input { flex: 1; background: var(--ink-2); color: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 14px; font-size: 16px; outline: none; }
+  .composer input { flex: 1; }
   .match { position: absolute; inset: 0; z-index: 9; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 28px; background: radial-gradient(500px 280px at 50% 30%, rgba(255,78,50,.35), transparent 60%), rgba(8,10,8,.92); }
   .match.on { display: flex; }
-  .match h3 { font-family: Fraunces, serif; font-size: 46px; margin: 8px 0; letter-spacing: -.04em; line-height: .9; }
+  .match h3 { font-family: Fraunces, serif; font-size: 44px; margin: 8px 0; letter-spacing: -.04em; line-height: .9; }
   .pair { display: flex; justify-content: center; margin-bottom: 8px; }
   .pair img { width: 108px; height: 108px; object-fit: cover; border-radius: 50%; border: 4px solid var(--paper); }
   .pair img + img { margin-left: -28px; }
   .me-card { margin: 8px 22px; background: var(--ink-2); border: 1px solid var(--line); border-radius: 22px; padding: 16px; }
-  .big { font-family: Fraunces, serif; font-size: 40px; letter-spacing: -.04em; }
+  .me-photos { display: flex; gap: 8px; margin-bottom: 10px; }
+  .me-photos img { width: 72px; height: 96px; object-fit: cover; border-radius: 12px; }
+  .big { font-family: Fraunces, serif; font-size: 32px; letter-spacing: -.04em; }
   .hint { color: var(--sage); font-size: 13px; line-height: 1.45; }
   .empty { color: var(--sage); text-align: center; padding: 48px 16px; line-height: 1.5; }
   .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
   .tabs button { flex: 1; }
   .loc { display: flex; gap: 10px; align-items: center; background: var(--ink-2); border: 1px solid var(--line); border-radius: 16px; padding: 12px; margin-top: 8px; }
   .pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--volt); box-shadow: 0 0 0 6px rgba(215,242,106,.15); }
+  .pulse.off { background: var(--coral); box-shadow: none; }
 </style>
 </head>
 <body>
@@ -110,32 +124,29 @@
     <div class="top"><div class="brand"><div class="mark"></div><div class="word">Pace <span>Match</span></div></div></div>
     <div class="hero"><p>Quem corre, perto de você.</p></div>
     <div class="pad">
-      <p class="lede">É um app de namoro no modelo do Tinder, só para o público de corrida. A pessoa entra com foto e GPS. Pace, prova e quilometragem não são pré-requisito.</p>
-      <div class="chips"><span class="chip">foto</span><span class="chip">mesma região</span><span class="chip">like mútuo</span><span class="chip">corrida opcional</span></div>
+      <p class="lede">Cadastro com nome, três fotos, gênero, quem você busca, idade e um pouco de você. O GPS é obrigatório para o raio de 0 a 50 km.</p>
+      <div class="chips"><span class="chip">3 fotos</span><span class="chip">GPS</span><span class="chip">0–50 km</span><span class="chip">like mútuo</span></div>
     </div>
-    <div class="dock"><button class="primary" style="flex:1" onclick="go('onboard')">Usar minha localização</button></div>
+    <div class="dock"><button class="primary" style="flex:1" onclick="go('signup')">Criar conta</button></div>
   </section>
 
-  <section class="screen" id="onboard">
-    <div class="top"><div class="brand"><div class="mark"></div><div class="word">Onde você está</div></div></div>
-    <div class="pad">
-      <h1>O deck segue o GPS.</h1>
-      <p class="lede">Igual ao Tinder: você define o raio. Quem está fora não aparece. Nada de ficha de corrida para liberar o app.</p>
-      <div class="loc"><span class="pulse"></span><div><b id="place">Pinheiros, São Paulo</b><br><span class="hint">localização simulada do celular</span></div></div>
-      <div style="margin-top:22px"><label>Raio de descoberta · <span id="radiusLabel">15 km</span></label><input id="radius" type="range" min="2" max="50" value="15" oninput="setRadius(this.value)" /></div>
-      <p class="hint" id="radiusHint"></p>
+  <section class="screen" id="signup">
+    <div class="top"><div class="brand"><div class="mark"></div><div class="word">Cadastro</div></div><span class="ghost" id="stepLabel">1 / 4</span></div>
+    <div class="pad" id="signBody"></div>
+    <div class="dock">
+      <button class="secondary" onclick="signBack()">Voltar</button>
+      <button class="primary" style="flex:1" id="signNext" onclick="signNext()">Continuar</button>
     </div>
-    <div class="dock"><button class="secondary" onclick="go('splash')">Voltar</button><button class="primary" style="flex:1" onclick="enterDeck()">Ver gente perto</button></div>
   </section>
 
   <section class="screen" id="discover">
-    <div class="top"><div class="brand"><div class="mark"></div><div class="word">Pace <span>Match</span></div></div><button class="ghost" id="radiusBtn" onclick="go('onboard')">15 km</button></div>
+    <div class="top"><div class="brand"><div class="mark"></div><div class="word">Pace <span>Match</span></div></div><button class="ghost" id="radiusBtn" onclick="go('me')">15 km</button></div>
     <div class="deck" id="deck"></div>
     <div class="actions">
-      <button class="round undo" onclick="undo()" aria-label="Desfazer">↩</button>
-      <button class="round" onclick="swipe('pass')" aria-label="Passar">✕</button>
-      <button class="round super" onclick="swipe('super')" aria-label="Super like">★</button>
-      <button class="round like" onclick="swipe('like')" aria-label="Curtir">♥</button>
+      <button class="round undo" onclick="undo()">↩</button>
+      <button class="round" onclick="swipe('pass')">✕</button>
+      <button class="round super" onclick="swipe('super')">★</button>
+      <button class="round like" onclick="swipe('like')">♥</button>
     </div>
     <nav class="nav"></nav>
   </section>
@@ -161,17 +172,14 @@
   <section class="screen" id="me">
     <div class="top"><div class="word">Você</div><button class="ghost" onclick="go('discover')">Deck</button></div>
     <div class="me-card" id="meCard"></div>
-    <div class="pad">
-      <p class="kicker">Sem pré-requisito</p>
-      <p class="lede">Conta comum: foto, idade e GPS. Correr é o recorte do app, não uma prova de entrada. Quem quiser escreve no perfil que corre; quem não quiser, só aparece.</p>
-      <button class="secondary" onclick="resetDemo()">Recomeçar demo</button>
-    </div>
+    <div class="pad"><button class="secondary" onclick="resetDemo()">Sair e refazer cadastro</button></div>
     <nav class="nav"></nav>
   </section>
 
   <section class="sheet" id="detail"></section>
   <section class="sheet" id="chat"></section>
   <div class="match" id="match"></div>
+  <input class="file" id="file" type="file" accept="image/*" multiple />
 </div>
 <script>
 const PHOTOS = {
@@ -179,30 +187,32 @@ const PHOTOS = {
   clara: "imagine_images/7oEfm.jpg", kenji: "imagine_images/QKHjj.jpg", lia: "imagine_images/9ADRT.jpg",
   hero: "imagine_images/RMNJN.jpg"
 };
-const me = { lat: -23.567, lng: -46.692, city: "Pinheiros, São Paulo", radius: 15 };
 const people = [
-  { id:"marina", name:"Marina Alves", age:29, area:"Vila Madalena", km:1.4, bio:"Mora aqui perto. Corre às vezes de manhã, mas entrou no app para conhecer gente, não para preencher planilha.", note:"corre às vezes", likesYou:true },
-  { id:"lucas", name:"Lucas Mendes", age:31, area:"Urca", km:6.8, bio:"Foto, orla e zero ficha técnica. Se rolar match, a conversa começa pelo normal.", note:"", likesYou:false },
-  { id:"amina", name:"Amina Costa", age:27, area:"Rio Vermelho", km:28, bio:"Está na cidade por um tempo. Sem pace cadastrado. O filtro é a distância.", note:"", likesYou:true },
-  { id:"clara", name:"Clara Viana", age:28, area:"Pacaembu", km:3.1, bio:"Gosta de trilha no fim de semana. Não colocou tempo, distância nem prova.", note:"trilha no fim de semana", likesYou:false },
-  { id:"kenji", name:"Kenji Sato", age:32, area:"Santos", km:18, bio:"Perfil comum. A única exigência do app foi a localização do celular.", note:"", likesYou:false },
-  { id:"lia", name:"Lia Ferreira", age:29, area:"Barra Funda", km:4.6, bio:"Corre, mas isso não é pré-requisito. O que decide o match é se os dois se curtiram.", note:"", likesYou:true }
+  { id:"marina", name:"Marina Alves", age:29, gender:"mulher", area:"Vila Madalena", km:1.4, bio:"Mora aqui perto. Corre de manhã quando o dia deixa.", hobby:"café depois do easy", prova:"meia", tempo:"3–5 anos", likesYou:true },
+  { id:"lucas", name:"Lucas Mendes", age:31, gender:"homem", area:"Urca", km:6.8, bio:"Orla no fim do dia. Sem planilha no perfil.", hobby:"fotografia", prova:"10 km", tempo:"1–3 anos", likesYou:false },
+  { id:"amina", name:"Amina Costa", age:27, gender:"mulher", area:"Rio Vermelho", km:28, bio:"Está na cidade por um tempo.", hobby:"vinil", prova:"5 km", tempo:"menos de 1 ano", likesYou:true },
+  { id:"clara", name:"Clara Viana", age:28, gender:"mulher", area:"Pacaembu", km:3.1, bio:"Trilha no fim de semana, cidade no resto.", hobby:"trilha", prova:"trilha", tempo:"mais de 5 anos", likesYou:false },
+  { id:"kenji", name:"Kenji Sato", age:32, gender:"homem", area:"Santos", km:18, bio:"Perfil curto. Prefere marcar do que escrever.", hobby:"mar", prova:"meia", tempo:"1–3 anos", likesYou:false },
+  { id:"lia", name:"Lia Ferreira", age:29, gender:"mulher", area:"Barra Funda", km:4.6, bio:"Pista às terças, easy no domingo.", hobby:"pista", prova:"5 km", tempo:"3–5 anos", likesYou:true }
 ];
-let queue = [], history = [], sent = [], matches = [], chats = {}, currentChat = null, matchTab = "matches", busy = false;
+const me = { name:"", age:"", gender:"", seeking:"", prova:"", tempo:"", about:"", hobby:"", photos:[], lat:null, lng:null, place:"", radius:15, gps:false };
+let step = 0, queue = [], history = [], sent = [], matches = [], chats = {}, currentChat = null, matchTab = "matches", busy = false, signed = false;
 
-function nearby() { return people.filter(p => p.km <= me.radius).sort((a,b) => a.km - b.km); }
 function person(id) { return people.find(p => p.id === id); }
-function kmLabel(km) { return km < 1 ? Math.round(km * 1000) + " m" : km.toFixed(1).replace(".", ",") + " km"; }
-
+function kmLabel(km) { return km < 1 ? Math.round(km * 1000) + " m" : String(km).replace(".", ",") + " km"; }
+function visiblePeople() {
+  return people.filter(p => p.km <= me.radius && (me.seeking === "todos" || p.gender === me.seeking));
+}
 function go(id) {
+  if (!signed && id !== "splash" && id !== "signup") return go("signup");
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("on"));
   document.getElementById(id).classList.add("on");
   document.querySelectorAll(".sheet").forEach(s => s.classList.remove("on"));
+  if (id === "signup") renderSignup();
   if (id === "discover") renderDeck();
   if (id === "matches") renderMatches();
   if (id === "runs") renderChats();
   if (id === "me") renderMe();
-  if (id === "onboard") setRadius(me.radius);
   paintNav(id);
 }
 function paintNav(active) {
@@ -215,38 +225,129 @@ function icon(name) {
   const p = { pin:'<path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.2"/>', heart:'<path d="M12 19s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z"/>', chat:'<path d="M5 6h14v9H8l-3 3z"/>', user:'<circle cx="12" cy="8" r="3.2"/><path d="M5 19c1.4-3 3.8-4.5 7-4.5S17.6 16 19 19"/>' };
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">${p[name]}</svg>`;
 }
+function renderSignup() {
+  document.getElementById("stepLabel").textContent = (step + 1) + " / 4";
+  const body = document.getElementById("signBody");
+  const next = document.getElementById("signNext");
+  next.textContent = step === 3 ? "Entrar no deck" : "Continuar";
+  if (step === 0) {
+    body.innerHTML = `<h1>Quem é você</h1><p class="lede">Nome, idade e gênero. Também quem você quer ver no deck.</p>
+      <label>Nome</label><input id="fName" type="text" value="${esc(me.name)}" placeholder="Seu nome" />
+      <label>Idade</label><input id="fAge" type="number" min="18" max="80" value="${esc(me.age)}" placeholder="18+" />
+      <label>Gênero</label><div class="chips" id="genders">${opts(["mulher","homem","não-binário"], me.gender, "gender")}</div>
+      <label>Busco</label><div class="chips" id="seeks">${opts(["mulher","homem","todos"], me.seeking, "seeking")}</div>
+      <p class="err" id="err"></p>`;
+  } else if (step === 1) {
+    body.innerHTML = `<h1>Pelo menos 3 fotos</h1><p class="lede">O deck é visual. Sem três fotos, a conta não abre.</p>
+      <div class="photos" id="slots"></div>
+      <button class="secondary" style="margin-top:12px;width:100%" onclick="document.getElementById('file').click()">Adicionar fotos</button>
+      <p class="err" id="err"></p>`;
+    paintSlots();
+  } else if (step === 2) {
+    body.innerHTML = `<h1>Um pouco de você</h1><p class="lede">Prova e tempo de corrida são parte do perfil, não uma prova de entrada.</p>
+      <label>Prova que mais gosta</label><select id="fProva">${sel(["5 km","10 km","meia","maratona","trilha","ainda não tenho"], me.prova)}</select>
+      <label>Há quanto tempo corre</label><select id="fTempo">${sel(["estou começando","menos de 1 ano","1–3 anos","3–5 anos","mais de 5 anos"], me.tempo)}</select>
+      <label>Hobby</label><input id="fHobby" type="text" value="${esc(me.hobby)}" placeholder="Fora da corrida" />
+      <label>Sobre você</label><textarea id="fAbout" placeholder="Como você se apresenta">${esc(me.about)}</textarea>
+      <p class="err" id="err"></p>`;
+  } else {
+    body.innerHTML = `<h1>GPS e raio</h1><p class="lede">Sem localização o deck não abre. O raio vai de 0 a 50 km.</p>
+      <div class="loc"><span class="pulse ${me.gps?"":"off"}"></span><div><b id="place">${me.gps?esc(me.place):"GPS ainda não permitido"}</b><br><span class="hint">${me.gps?"localização do celular":"obrigatório para continuar"}</span></div></div>
+      <button class="secondary" style="margin-top:12px;width:100%" onclick="askGps()">Permitir GPS</button>
+      <label>Raio · <span id="radiusLabel">${me.radius} km</span></label>
+      <input id="radius" type="range" min="0" max="50" value="${me.radius}" oninput="setRadius(this.value)" />
+      <p class="hint" id="radiusHint"></p><p class="err" id="err"></p>`;
+    setRadius(me.radius);
+  }
+}
+function opts(list, current, key) {
+  return list.map(v => `<button type="button" class="chip ${current===v?"on":""}" onclick="pick('${key}','${v}')">${v}</button>`).join("");
+}
+function sel(list, current) {
+  return `<option value="">escolher</option>` + list.map(v => `<option ${current===v?"selected":""}>${v}</option>`).join("");
+}
+function esc(s) { return String(s || "").replace(/[&<>"]/g, c => ({"&":"&","<":"<",">":">","\"":"""}[c])); }
+function pick(key, value) { me[key] = value; renderSignup(); }
+function paintSlots() {
+  const box = document.getElementById("slots");
+  if (!box) return;
+  const slots = [0,1,2].map(i => me.photos[i]
+    ? `<div class="slot"><img src="${me.photos[i]}" alt="foto ${i+1}" /><button onclick="removePhoto(${i})">×</button></div>`
+    : `<div class="slot">${i+1}</div>`).join("");
+  box.innerHTML = slots;
+}
+function removePhoto(i) { me.photos.splice(i, 1); paintSlots(); }
+document.getElementById("file").addEventListener("change", async (e) => {
+  const files = [...e.target.files].filter(f => f.type.startsWith("image/"));
+  for (const file of files) {
+    if (me.photos.length >= 6) break;
+    me.photos.push(await readFile(file));
+  }
+  e.target.value = "";
+  paintSlots();
+});
+function readFile(file) { return new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(file); }); }
+function signBack() { if (step === 0) return go("splash"); step--; renderSignup(); }
+function signNext() {
+  const err = document.getElementById("err");
+  if (step === 0) {
+    me.name = document.getElementById("fName").value.trim();
+    me.age = document.getElementById("fAge").value;
+    if (!me.name || !me.age || +me.age < 18 || !me.gender || !me.seeking) { err.textContent = "Preencha nome, idade 18+, seu gênero e quem você busca."; return; }
+  }
+  if (step === 1 && me.photos.length < 3) { err.textContent = "Envie pelo menos 3 fotos para começar."; return; }
+  if (step === 2) {
+    me.prova = document.getElementById("fProva").value;
+    me.tempo = document.getElementById("fTempo").value;
+    me.hobby = document.getElementById("fHobby").value.trim();
+    me.about = document.getElementById("fAbout").value.trim();
+    if (!me.prova || !me.tempo || !me.hobby || !me.about) { err.textContent = "Prova, tempo de corrida, hobby e sobre você são obrigatórios."; return; }
+  }
+  if (step === 3) {
+    if (!me.gps) { err.textContent = "Permita o GPS. Sem ele o raio não existe."; return; }
+    signed = true;
+    queue = visiblePeople().map(p => p.id);
+    history = []; sent = []; matches = []; chats = {};
+    return go("discover");
+  }
+  step++; renderSignup();
+}
 function setRadius(v) {
   me.radius = +v;
-  const el = document.getElementById("radius");
-  if (el) el.value = v;
   const label = document.getElementById("radiusLabel");
   if (label) label.textContent = v + " km";
   const hint = document.getElementById("radiusHint");
-  if (hint) hint.textContent = nearby().length + " pessoas dentro deste raio. Fora dele, o card nem entra na fila.";
+  if (hint && signed) hint.textContent = visiblePeople().length + " pessoas neste raio e neste gênero.";
+  else if (hint) hint.textContent = "0 km mostra só quem está no mesmo ponto. 50 km é o máximo.";
   const btn = document.getElementById("radiusBtn");
   if (btn) btn.textContent = v + " km";
 }
-function enterDeck() {
-  queue = nearby().map(p => p.id);
-  history = []; sent = []; matches = []; chats = {};
-  go("discover");
+function askGps() {
+  const err = document.getElementById("err");
+  if (!navigator.geolocation) { err.textContent = "Este aparelho não entregou GPS."; return; }
+  err.textContent = "Pedindo a localização do celular…";
+  navigator.geolocation.getCurrentPosition(pos => {
+    me.lat = pos.coords.latitude;
+    me.lng = pos.coords.longitude;
+    me.gps = true;
+    me.place = me.lat.toFixed(3) + ", " + me.lng.toFixed(3);
+    renderSignup();
+  }, () => {
+    err.textContent = "GPS negado. O cadastro não continua sem localização.";
+  }, { enableHighAccuracy: true, timeout: 8000 });
 }
 function cardHTML(p, back) {
-  const note = p.note ? `<span class="stat">${p.note}</span>` : `<span class="stat">sem ficha de corrida</span>`;
   return `<article class="card ${back?"back":"top"}" data-id="${p.id}">
     <img class="photo" src="${PHOTOS[p.id]}" alt="${p.name}" /><div class="veil"></div>
     <div class="stamp like">Like</div><div class="stamp nope">Nope</div><div class="stamp super">Super</div>
     <div class="badge">${kmLabel(p.km)}</div>
-    <div class="meta"><h2>${p.name.split(" ")[0]}, ${p.age}</h2><div class="sub">${p.area} · perto de você</div><div class="stats">${note}</div></div>
+    <div class="meta"><h2>${p.name.split(" ")[0]}, ${p.age}</h2><div class="sub">${p.area}</div><div class="stats"><span class="stat">${p.prova}</span><span class="stat">${p.hobby}</span></div></div>
   </article>`;
 }
 function renderDeck() {
   const deck = document.getElementById("deck");
-  queue = queue.filter(id => person(id).km <= me.radius);
-  if (!queue.length) {
-    deck.innerHTML = `<div class="empty">Ninguém neste raio de ${me.radius} km.<br>Aumente a distância, como no Tinder.</div>`;
-    return;
-  }
+  queue = queue.filter(id => { const p = person(id); return p.km <= me.radius && (me.seeking === "todos" || p.gender === me.seeking); });
+  if (!queue.length) { deck.innerHTML = `<div class="empty">Ninguém em ${me.radius} km para ${me.seeking}.<br>Aumente o raio no seu perfil.</div>`; return; }
   const top = person(queue[0]), next = queue[1] ? person(queue[1]) : null;
   deck.innerHTML = (next ? cardHTML(next, true) : "") + cardHTML(top, false);
   bindSwipe(deck.querySelector(".top"));
@@ -259,17 +360,13 @@ function bindSwipe(card) {
     if (x0 == null) return;
     dx = e.clientX - x0; dy = e.clientY - y0;
     card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx/18}deg)`;
-    like.style.opacity = Math.max(0, dx / 120);
-    nope.style.opacity = Math.max(0, -dx / 120);
-    sup.style.opacity = Math.max(0, -dy / 140);
+    like.style.opacity = Math.max(0, dx / 120); nope.style.opacity = Math.max(0, -dx / 120); sup.style.opacity = Math.max(0, -dy / 140);
   });
   card.addEventListener("pointerup", () => {
     if (Math.abs(dy) > 120 && dy < 0 && Math.abs(dy) > Math.abs(dx)) return swipe("super");
     if (dx > 110) return swipe("like");
     if (dx < -110) return swipe("pass");
-    card.style.transform = "";
-    like.style.opacity = nope.style.opacity = sup.style.opacity = 0;
-    x0 = null; dx = 0;
+    card.style.transform = ""; like.style.opacity = nope.style.opacity = sup.style.opacity = 0; x0 = null; dx = 0;
   });
   card.addEventListener("click", () => { if (Math.abs(dx) < 6) openDetail(card.dataset.id); });
 }
@@ -289,10 +386,9 @@ function commit(kind) {
   const p = person(id);
   if (kind === "like" || kind === "super") {
     sent.push({ id, kind });
-    if (p.likesYou) { matches.push(id); chats[id] = []; showMatch(p, kind); }
+    if (p.likesYou) { matches.push(id); chats[id] = []; showMatch(p); }
   }
-  renderDeck();
-  paintNav("discover");
+  renderDeck(); paintNav("discover");
 }
 function undo() {
   if (!history.length || busy) return;
@@ -301,17 +397,14 @@ function undo() {
   sent = sent.filter(s => s.id !== last.id);
   matches = matches.filter(id => id !== last.id);
   delete chats[last.id];
-  closeMatch();
-  renderDeck();
-  paintNav("discover");
+  closeMatch(); renderDeck(); paintNav("discover");
 }
 function showMatch(p) {
   const box = document.getElementById("match");
   box.classList.add("on");
-  box.innerHTML = `<div class="pair"><img src="${PHOTOS[p.id]}" alt="" /><img src="${PHOTOS.hero}" alt="" /></div>
-    <div class="kicker">é um match</div>
-    <h3>Você e ${p.name.split(" ")[0]} se curtiram</h3>
-    <p class="lede">${kmLabel(p.km)} de você. Os dois deram like. Corrida não entrou na conta.</p>
+  box.innerHTML = `<div class="pair"><img src="${PHOTOS[p.id]}" alt="" /><img src="${me.photos[0]}" alt="" /></div>
+    <div class="kicker">é um match</div><h3>Você e ${p.name.split(" ")[0]} se curtiram</h3>
+    <p class="lede">${kmLabel(p.km)} de você. Os dois deram like.</p>
     <button class="primary" style="width:100%;margin-bottom:10px" onclick="openChat('${p.id}')">Mandar mensagem</button>
     <button class="secondary" style="width:100%" onclick="closeMatch()">Continuar</button>`;
 }
@@ -320,10 +413,8 @@ function openDetail(id) {
   const p = person(id);
   document.getElementById("detail").classList.add("on");
   document.getElementById("detail").innerHTML = `<div class="cover"><img src="${PHOTOS[p.id]}" alt="${p.name}" /><button class="back" onclick="closeSheets()">←</button></div>
-    <div class="body"><div class="kicker">${kmLabel(p.km)} · ${p.area}</div>
-    <h1 style="font-size:36px;margin-top:6px">${p.name}, ${p.age}</h1>
-    <p class="lede">${p.bio}</p>
-    <div class="stats"><span class="stat">${p.note || "sem dado de corrida"}</span><span class="stat">GPS ativo</span></div>
+    <div class="body"><div class="kicker">${kmLabel(p.km)} · ${p.area}</div><h1 style="font-size:36px;margin-top:6px">${p.name}, ${p.age}</h1>
+    <p class="lede">${p.bio}</p><div class="stats"><span class="stat">${p.prova}</span><span class="stat">${p.tempo}</span><span class="stat">${p.hobby}</span></div>
     <div class="dock" style="position:static;margin-top:18px"><button class="secondary" onclick="closeSheets();swipe('pass')">Nope</button><button class="primary" style="flex:1" onclick="closeSheets();swipe('like')">Like</button></div></div>`;
 }
 function closeSheets(){ document.querySelectorAll(".sheet").forEach(s => s.classList.remove("on")); closeMatch(); }
@@ -336,39 +427,40 @@ function showMatchTab(tab) {
 function renderMatches() {
   const box = document.getElementById("matchList");
   const rows = matchTab === "sent" ? sent.map(s => s.id) : matches;
-  if (!rows.length) { box.innerHTML = `<div class="empty">${matchTab==="sent"?"Nenhuma curtida enviada.":"Match só quando os dois curtem. Distância aproxima; like confirma."}</div>`; return; }
-  box.innerHTML = `<div class="list">${rows.map(id => {
-    const p = person(id); const mutual = matches.includes(id);
-    return `<button class="person" onclick="${mutual?`openChat('${id}')`:""}"><img src="${PHOTOS[id]}" alt="" /><span><b>${p.name}</b><small>${kmLabel(p.km)} · ${p.area}${mutual?" · match":""}</small></span><span class="score">${mutual?"match":"…"}</span></button>`;
-  }).join("")}</div>`;
+  if (!rows.length) { box.innerHTML = `<div class="empty">${matchTab==="sent"?"Nenhuma curtida enviada.":"Match só quando os dois curtem."}</div>`; return; }
+  box.innerHTML = `<div class="list">${rows.map(id => { const p = person(id); const mutual = matches.includes(id); return `<button class="person" onclick="${mutual?`openChat('${id}')`:""}"><img src="${PHOTOS[id]}" alt="" /><span><b>${p.name}</b><small>${kmLabel(p.km)} · ${p.area}</small></span><span class="score">${mutual?"match":"…"}</span></button>`; }).join("")}</div>`;
 }
 function renderChats() {
   const box = document.getElementById("runList");
   if (!matches.length) { box.innerHTML = `<div class="empty">Chat abre depois do match mútuo.</div>`; return; }
-  box.innerHTML = `<div class="list">${matches.map(id => {
-    const p = person(id); const last = (chats[id]||[]).at(-1);
-    return `<button class="person" onclick="openChat('${id}')"><img src="${PHOTOS[id]}" alt="" /><span><b>${p.name.split(" ")[0]}</b><small>${last?last.text:"A " + kmLabel(p.km) + " de você"}</small></span></button>`;
-  }).join("")}</div>`;
+  box.innerHTML = `<div class="list">${matches.map(id => { const p = person(id); const last = (chats[id]||[]).at(-1); return `<button class="person" onclick="openChat('${id}')"><img src="${PHOTOS[id]}" alt="" /><span><b>${p.name.split(" ")[0]}</b><small>${last?last.text:kmLabel(p.km)+" de você"}</small></span></button>`; }).join("")}</div>`;
 }
 function renderMe() {
-  document.getElementById("meCard").innerHTML = `<div class="kicker">GPS do celular</div><div class="big">${me.city.split(",")[0]}</div><p class="hint">Raio de ${me.radius} km · perfil comum, sem pace obrigatório<br>${sent.length} likes enviados · ${matches.length} matches</p>`;
+  document.getElementById("meCard").innerHTML = `<div class="me-photos">${me.photos.slice(0,3).map(src => `<img src="${src}" alt="" />`).join("")}</div>
+    <div class="kicker">${me.gender} · busca ${me.seeking}</div><div class="big">${esc(me.name)}, ${esc(me.age)}</div>
+    <p class="hint">${esc(me.place)} · raio ${me.radius} km<br>${esc(me.prova)} · ${esc(me.tempo)} · ${esc(me.hobby)}<br>${esc(me.about)}</p>
+    <label>Ajustar raio · <span id="radiusLabel">${me.radius} km</span></label>
+    <input id="radius" type="range" min="0" max="50" value="${me.radius}" oninput="setRadius(this.value); queue=visiblePeople().map(p=>p.id).filter(id=>!history.some(h=>h.id===id));" />`;
 }
 function openChat(id) {
   closeMatch(); currentChat = id; const p = person(id); if (!chats[id]) chats[id] = [];
   document.getElementById("chat").classList.add("on");
   document.getElementById("chat").innerHTML = `<div class="top"><button class="ghost" onclick="closeSheets()">Fechar</button><div class="word">${p.name.split(" ")[0]}</div><span class="score">${kmLabel(p.km)}</span></div>
-    <div class="pad">${chats[id].map(m => `<div class="bubble ${m.from==="me"?"me":""}">${m.text}</div>`).join("") || `<div class="empty">Vocês se curtiram e estão perto. A primeira mensagem é sua.</div>`}</div>
+    <div class="pad">${chats[id].map(m => `<div class="bubble ${m.from==="me"?"me":""}">${esc(m.text)}</div>`).join("") || `<div class="empty">Vocês se curtiram. A primeira mensagem é sua.</div>`}</div>
     <div class="composer"><input id="msg" placeholder="Mensagem" /><button class="primary" onclick="send()">Enviar</button></div>`;
 }
 function send() {
   const text = document.getElementById("msg").value.trim();
   if (!text || !currentChat) return;
   chats[currentChat].push({ from:"me", text });
-  chats[currentChat].push({ from:"them", text:"Oi. Também estou por aqui. Se quiser, a gente se vê — correr junto é convite, não regra." });
+  chats[currentChat].push({ from:"them", text:"Oi. Também estou nesse raio. Se quiser, a gente se vê." });
   openChat(currentChat);
 }
-function resetDemo() { me.radius = 15; queue = []; history = []; sent = []; matches = []; chats = {}; closeMatch(); go("splash"); }
-setRadius(15);
+function resetDemo() {
+  Object.assign(me, { name:"", age:"", gender:"", seeking:"", prova:"", tempo:"", about:"", hobby:"", photos:[], lat:null, lng:null, place:"", radius:15, gps:false });
+  step = 0; signed = false; queue = []; history = []; sent = []; matches = []; chats = {};
+  closeMatch(); go("splash");
+}
 paintNav("splash");
 </script>
 </body>

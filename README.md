@@ -1,16 +1,20 @@
 # Pace Match
 
-App de namoro para o público de corrida. A mecânica é a do Tinder: foto, GPS, raio e like mútuo. Corrida é o recorte do produto, não um pré-requisito.
+App de namoro para o público de corrida. A mecânica é a do Tinder: foto, GPS, raio e like mútuo.
 
-## O que decide o match
+## Cadastro
 
-- Localização do celular e raio de descoberta
-- Like dos dois lados
-- Chat só depois do match
+Obrigatório para abrir o deck:
 
-Pace, prova e quilometragem podem aparecer no perfil se a pessoa quiser. Não liberam nem bloqueiam a conta.
+- Nome
+- Pelo menos 3 fotos
+- Gênero e gênero que busca
+- Idade
+- Prova favorita e há quanto tempo corre
+- Hobby e um texto sobre a pessoa
+- GPS do celular
+- Raio de 0 a 50 km
 
 ## Demo
 
-Abra `index.html` no navegador. A localização está simulada em Pinheiros, São Paulo. O raio padrão é 15 km.
-
+Abra `index.html`. Sem as 3 fotos e sem o GPS, o deck não abre.
