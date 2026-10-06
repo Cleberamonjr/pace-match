@@ -23,8 +23,10 @@ export default function App() {
   const [messages, setMessages] = useState([]);
   const [matches, setMatches] = useState([]);
   const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [authMessage, setAuthMessage] = useState("");
 
-  useEffect(() => { (async () => { const session = await repo.session(); if (session) { setMe({ ...empty, ...session.me }); setMatches(session.matches || []); setReady(true); } else track("signup_started"); })(); }, [repo]);
+  useEffect(() => { (async () => { try { const session = await repo.session(); if (session?.me) { setMe({ ...empty, ...session.me }); setMatches(session.matches || []); setReady(true); } else track("signup_started"); } catch (e) { setError(e.message); } })(); }, [repo]);
   useEffect(() => { if (ready) refresh(me); }, [ready, me.radiusKm, me.ageMin, me.ageMax, me.seeking, me.blocked, matches]);
 
   async function refresh(next = me) {
@@ -69,7 +71,7 @@ export default function App() {
   return (
     <div className="stage">
       <div className="banner">{repo.mode === "local" ? "Modo local. Match real depende do Supabase." : "Supabase conectado."}</div>
-      {!ready ? <Onboarding step={step} me={me} set={set} error={error} onBack={() => setStep(s => Math.max(0, s - 1))} onNext={async () => {
+      {repo.mode === "unconfigured" ? null : !ready ? <Onboarding step={step} me={me} set={set} error={error} onBack={() => setStep(s => Math.max(0, s - 1))} onNext={async () => {
         setError("");
         if (step === 0 && (!me.name || +me.age < 18 || !me.gender || me.photos.length < 3)) return setError("Nome, idade 18+, gênero e 3 fotos.");
         if (step === 1 && (!me.seeking || !me.ageMin || !me.ageMax)) return setError("Defina quem você procura, faixa e distância.");
@@ -109,7 +111,7 @@ function Onboarding({ step, me, set, error, onBack, onNext }) {
 }
 
 function Identity({ me, set }) {
-  return <><h1>Quem é você</h1><label>Nome</label><input value={me.name} onChange={e => set("name", e.target.value)} /><label>Idade</label><input type="number" value={me.age} onChange={e => set("age", e.target.value)} /><label>Gênero</label><Chips value={me.gender} options={["mulher", "homem", "não-binário"]} onPick={v => set("gender", v)} /><label>3 fotos</label><input type="file" accept="image/*" multiple onChange={async e => set("photos", await files(e.target.files))} /><div className="photos">{me.photos.map(src => <div className="slot" key={src}><img src={src} alt="" /></div>)}</div></>;
+  return <><h1>Quem é você</h1><label>Nome</label><input value={me.name} onChange={e => set("name", e.target.value)} /><label>Idade</label><input type="number" value={me.age} onChange={e => set("age", e.target.value)} /><label>Gênero</label><Chips value={me.gender} options={["mulher", "homem", "não-binário"]} onPick={v => set("gender", v)} /><label>3 fotos</label><input type="file" accept="image/*" multiple onChange={async e => set("photos", await files(e.target.files))} /><div className="photos">{me.photos.map((src, i) => <div className="slot" key={i}><img src={src.dataUrl || src.public_url || src.url || src} alt="" /></div>)}</div></>;
 }
 function Seeking({ me, set }) {
   return <><h1>Quem você procura</h1><Chips value={me.seeking} options={["mulher", "homem", "todos"]} onPick={v => set("seeking", v)} /><label>Idade mínima</label><input type="number" value={me.ageMin} onChange={e => set("ageMin", +e.target.value)} /><label>Idade máxima</label><input type="number" value={me.ageMax} onChange={e => set("ageMax", +e.target.value)} /><label>Distância máxima · {me.radiusKm} km</label><input type="range" min="0" max="50" value={me.radiusKm} onChange={e => set("radiusKm", +e.target.value)} /><Gps onPlace={place => { set("area", place); set("gps", true); }} /></>;
