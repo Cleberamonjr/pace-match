@@ -1,0 +1,8 @@
+export const demoProfiles = [
+  { id: "marina", name: "Marina", age: 29, gender: "mulher", km: 1.4, area: "Vila Madalena", bio: "Corre de manhã quando o dia deixa.", hobbies: ["café", "trilhas"], sport: "corrida", frequency: "3x por semana", intention: "namoro", lifestyleFit: 0.8, photo: "/profiles/d486O.jpg", likesYou: true },
+  { id: "lucas", name: "Lucas", age: 31, gender: "homem", km: 6.8, area: "Urca", bio: "Orla no fim do dia.", hobbies: ["fotografia"], sport: "corrida", frequency: "2x por semana", intention: "conhecer", lifestyleFit: 0.6, photo: "/profiles/khSK2.jpg", likesYou: false },
+  { id: "amina", name: "Amina", age: 27, gender: "mulher", km: 28, area: "Rio Vermelho", bio: "Na cidade por um tempo.", hobbies: ["vinil"], sport: "", frequency: "", intention: "namoro", lifestyleFit: 0.5, photo: "/profiles/hY50J.jpg", likesYou: true },
+  { id: "clara", name: "Clara", age: 28, gender: "mulher", km: 3.1, area: "Pacaembu", bio: "Trilha no fim de semana, cidade no resto.", hobbies: ["trilhas"], sport: "trilha", frequency: "fins de semana", intention: "namoro", lifestyleFit: 0.7, photo: "/profiles/7oEfm.jpg", likesYou: false },
+  { id: "kenji", name: "Kenji", age: 32, gender: "homem", km: 18, area: "Santos", bio: "Prefere marcar do que escrever.", hobbies: ["mar"], sport: "", frequency: "", intention: "conhecer", lifestyleFit: 0.4, photo: "/profiles/QKHjj.jpg", likesYou: false },
+  { id: "lia", name: "Lia", age: 29, gender: "mulher", km: 4.6, area: "Barra Funda", bio: "Pista às terças, easy no domingo.", hobbies: ["café"], sport: "corrida", frequency: "4x por semana", intention: "namoro", lifestyleFit: 0.7, photo: "/profiles/9ADRT.jpg", likesYou: true }
+];

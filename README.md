@@ -1,19 +1,29 @@
-# RunDate
+# PACE
 
-Namoro para quem corre. A interface e a lógica seguem o que o Tinder faz bem: card em tela cheia, swipe, raio por GPS e match só quando os dois curtem.
+Aplicativo de relacionamento. A mecânica de descoberta usa card, swipe e match mútuo. Esporte é sinal de compatibilidade, não requisito.
 
-## Marca
+A marca desta fase é PACE.
 
-Logo e cores do arquivo de marca: navy, vermelho date, laranja e amarelo da chama.
+## O que está no repositório
 
-## Cadastro
+- `index.html` — protótipo preservado, ainda abre no navegador
+- `prototype/index.html` — mesma cópia
+- `docs/DIAGNOSIS.md` — estado do repositório
+- `docs/ARCHITECTURE.md` — hard filter, soft signal e ordem de evolução
+- `supabase/migrations/0001_init.sql` — schema e RLS, ainda não aplicado
+- `app/` — cliente React/Vite
 
-Obrigatório antes do deck:
+## App
 
-- Nome, idade, gênero e gênero buscado
-- Pelo menos 3 fotos
-- Prova favorita, tempo de corrida, hobby e texto sobre a pessoa
-- GPS do celular
-- Raio de 0 a 50 km
+```bash
+cd app
+npm install
+npm test
+npm run dev
+```
 
-Abra `index.html`.
+Sem `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`, o app sobe em modo local e diz isso. Não há projeto Supabase ligado neste repositório.
+
+## Privacidade
+
+A interface mostra distância aproximada e bairro. Não mostra coordenada.

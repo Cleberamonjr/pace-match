@@ -1,0 +1,9 @@
+{
+  "name": "PACE",
+  "short_name": "PACE",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f1ee",
+  "theme_color": "#1b1740",
+  "description": "Relacionamento perto de você. Esporte é sinal, não requisito."
+}
