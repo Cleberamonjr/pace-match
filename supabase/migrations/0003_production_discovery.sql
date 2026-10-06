@@ -135,3 +135,36 @@ revoke all on function public.record_pass(uuid) from public;
 grant execute on function public.record_pass(uuid) to authenticated;
 
 alter table matches enable row level security;
+
+
+create or replace function public.my_matches()
+returns table (
+  id uuid,
+  name text,
+  birth_date date,
+  gender text,
+  bio text,
+  area_label text,
+  photo_path text
+)
+language sql
+security definer
+set search_path = public
+as $$
+  select
+    p.id, p.name, p.birth_date, p.gender, p.bio, p.area_label,
+    (
+      select ph.storage_path
+      from photos ph
+      where ph.user_id = p.id
+      order by ph.position
+      limit 1
+    )
+  from matches m
+  join profiles p on p.id = case when m.user_a = auth.uid() then m.user_b else m.user_a end
+  where m.user_a = auth.uid() or m.user_b = auth.uid()
+  order by m.created_at desc;
+$$;
+
+revoke all on function public.my_matches() from public;
+grant execute on function public.my_matches() to authenticated;
