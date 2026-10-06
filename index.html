@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Pace Match</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,620&family=Outfit:wght@340;420;520;640&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #101410; --ink-2: #1a211c; --line: rgba(243,238,230,.12);
+    --paper: #f3eee6; --paper-dim: #d9d2c6; --coral: #ff4e32; --volt: #d7f26a; --sage: #9aaf9c;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #070908; color: var(--paper); font-family: Outfit, sans-serif; }
+  body { display: grid; place-items: center; }
+  button, input { font-family: inherit; }
+  button { cursor: pointer; }
+  .stage {
+    width: min(430px, 100vw); height: min(920px, 100dvh); position: relative; overflow: hidden;
+    background: radial-gradient(800px 420px at 80% -10%, rgba(255,78,50,.18), transparent 55%), #101410;
+    box-shadow: 0 24px 60px rgba(0,0,0,.35);
+  }
+  @media (min-width: 860px) { .stage { border-radius: 36px; border: 1px solid rgba(255,255,255,.06); height: min(900px, 94dvh); } }
+  .screen { position: absolute; inset: 0; display: none; flex-direction: column; }
+  .screen.on { display: flex; }
+  .top { display: flex; align-items: center; justify-content: space-between; padding: 22px 22px 8px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .mark { width: 34px; height: 34px; border-radius: 10px; background: #141816 url("imagine_images/yBbj3.jpg") center/140% no-repeat; border: 1px solid var(--line); }
+  .word { font-family: Fraunces, serif; font-size: 22px; letter-spacing: -.03em; }
+  .word span { color: var(--volt); }
+  .ghost { background: transparent; color: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; font-size: 13px; }
+  .hero { margin: 8px 22px 0; border-radius: 22px; overflow: hidden; height: 168px; position: relative; background: #111 url("imagine_images/RMNJN.jpg") center/cover no-repeat; }
+  .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(16,20,16,.05), rgba(16,20,16,.78)); }
+  .hero p { position: absolute; left: 16px; right: 16px; bottom: 14px; z-index: 1; margin: 0; font-family: Fraunces, serif; font-size: 26px; line-height: 1.05; letter-spacing: -.03em; }
+  .pad { padding: 18px 22px 110px; overflow: auto; }
+  h1 { font-family: Fraunces, serif; font-weight: 500; letter-spacing: -.03em; font-size: 38px; line-height: .95; margin: 18px 0 8px; }
+  .lede { color: var(--paper-dim); font-size: 15.5px; line-height: 1.45; margin: 0 0 18px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { border: 1px solid var(--line); background: rgba(255,255,255,.03); color: var(--paper); border-radius: 999px; padding: 10px 14px; font-size: 14px; }
+  .chip.on { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+  label { display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--sage); margin-bottom: 8px; }
+  input[type="range"] { width: 100%; accent-color: #d7f26a; }
+  .primary, .secondary { border: 0; border-radius: 16px; padding: 16px 18px; font-size: 16px; font-weight: 520; }
+  .primary { background: var(--volt); color: #17200d; }
+  .secondary { background: transparent; color: var(--paper); border: 1px solid var(--line); }
+  .dock { position: absolute; left: 16px; right: 16px; bottom: 16px; display: flex; gap: 10px; }
+  .nav { position: absolute; left: 14px; right: 14px; bottom: 12px; background: rgba(18,22,19,.86); backdrop-filter: blur(16px); border: 1px solid var(--line); border-radius: 22px; display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px; z-index: 4; }
+  .nav button { background: transparent; border: 0; color: var(--sage); font-size: 11px; padding: 8px 0 6px; display: grid; gap: 3px; justify-items: center; position: relative; }
+  .nav button.on { color: var(--volt); }
+  .nav svg { width: 20px; height: 20px; }
+  .dot { position: absolute; top: 4px; right: 22px; min-width: 16px; height: 16px; border-radius: 99px; background: var(--coral); color: white; font-size: 10px; display: grid; place-items: center; padding: 0 4px; }
+  .deck { position: relative; height: 500px; margin: 8px 22px 0; }
+  .card { position: absolute; inset: 0; border-radius: 28px; overflow: hidden; background: #111; box-shadow: 0 18px 40px rgba(0,0,0,.35); transform-origin: 50% 100%; touch-action: none; user-select: none; }
+  .card.back { transform: scale(.96) translateY(14px); filter: brightness(.72); pointer-events: none; }
+  .card img.photo { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+  .card .veil { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.02) 28%, rgba(0,0,0,.82) 100%); }
+  .badge { position: absolute; top: 16px; left: 16px; background: rgba(16,20,16,.72); border: 1px solid rgba(243,238,230,.2); color: var(--paper); border-radius: 999px; padding: 7px 10px; font-size: 12px; backdrop-filter: blur(8px); }
+  .stamp { position: absolute; top: 28px; font-family: Fraunces, serif; font-size: 42px; letter-spacing: .08em; text-transform: uppercase; border: 4px solid; border-radius: 12px; padding: 2px 10px; opacity: 0; }
+  .stamp.like { left: 18px; color: #d7f26a; border-color: #d7f26a; transform: rotate(-12deg); }
+  .stamp.nope { right: 18px; color: #ff4e32; border-color: #ff4e32; transform: rotate(12deg); }
+  .stamp.super { left: 50%; top: 70px; translate: -50% 0; color: #7ec8ff; border-color: #7ec8ff; }
+  .meta { position: absolute; left: 16px; right: 16px; bottom: 16px; }
+  .meta h2 { margin: 0; font-family: Fraunces, serif; font-weight: 520; font-size: 34px; letter-spacing: -.03em; }
+  .meta .sub { color: var(--paper-dim); margin: 4px 0 10px; font-size: 14px; }
+  .stats { display: flex; gap: 8px; flex-wrap: wrap; }
+  .stat { background: rgba(243,238,230,.12); border: 1px solid rgba(243,238,230,.14); border-radius: 999px; padding: 6px 10px; font-size: 12px; }
+  .actions { display: flex; justify-content: center; align-items: center; gap: 14px; padding: 14px 0 96px; }
+  .round { width: 58px; height: 58px; border-radius: 50%; border: 1px solid var(--line); background: var(--ink-2); color: var(--paper); font-size: 22px; }
+  .round.like { background: var(--coral); border-color: transparent; color: white; width: 72px; height: 72px; }
+  .round.super { color: #7ec8ff; width: 52px; height: 52px; }
+  .round.undo { width: 46px; height: 46px; font-size: 16px; color: var(--volt); }
+  .list { display: grid; gap: 10px; }
+  .person { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; background: var(--ink-2); border: 1px solid var(--line); border-radius: 18px; padding: 10px; color: inherit; text-align: left; width: 100%; }
+  .person img { width: 64px; height: 64px; object-fit: cover; border-radius: 14px; }
+  .person b { display: block; font-weight: 520; }
+  .person small { color: var(--sage); }
+  .score { color: var(--volt); font-size: 13px; font-weight: 640; }
+  .sheet { position: absolute; inset: 0; background: var(--ink); z-index: 6; display: none; flex-direction: column; }
+  .sheet.on { display: flex; }
+  .sheet .cover { height: 46%; position: relative; }
+  .sheet .cover img { width: 100%; height: 100%; object-fit: cover; }
+  .back { position: absolute; top: 16px; left: 16px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(16,20,16,.7); color: white; }
+  .sheet .body { padding: 18px 22px 28px; overflow: auto; }
+  .kicker { letter-spacing: .14em; text-transform: uppercase; font-size: 11px; color: var(--volt); }
+  .bubble { background: var(--ink-2); border-radius: 16px 16px 16px 6px; padding: 12px 14px; margin: 8px 0; max-width: 86%; font-size: 14.5px; line-height: 1.4; }
+  .bubble.me { margin-left: auto; background: #2c3820; border-radius: 16px 16px 6px 16px; }
+  .composer { display: flex; gap: 8px; padding: 0 16px 20px; }
+  .composer input { flex: 1; background: var(--ink-2); color: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 14px; font-size: 16px; outline: none; }
+  .match { position: absolute; inset: 0; z-index: 9; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 28px; background: radial-gradient(500px 280px at 50% 30%, rgba(255,78,50,.35), transparent 60%), rgba(8,10,8,.92); }
+  .match.on { display: flex; }
+  .match h3 { font-family: Fraunces, serif; font-size: 46px; margin: 8px 0; letter-spacing: -.04em; line-height: .9; }
+  .pair { display: flex; justify-content: center; margin-bottom: 8px; }
+  .pair img { width: 108px; height: 108px; object-fit: cover; border-radius: 50%; border: 4px solid var(--paper); }
+  .pair img + img { margin-left: -28px; }
+  .me-card { margin: 8px 22px; background: var(--ink-2); border: 1px solid var(--line); border-radius: 22px; padding: 16px; }
+  .big { font-family: Fraunces, serif; font-size: 40px; letter-spacing: -.04em; }
+  .hint { color: var(--sage); font-size: 13px; line-height: 1.45; }
+  .empty { color: var(--sage); text-align: center; padding: 48px 16px; line-height: 1.5; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+  .tabs button { flex: 1; }
+  .loc { display: flex; gap: 10px; align-items: center; background: var(--ink-2); border: 1px solid var(--line); border-radius: 16px; padding: 12px; margin-top: 8px; }
+  .pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--volt); box-shadow: 0 0 0 6px rgba(215,242,106,.15); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <section class="screen on" id="splash">
+    <div class="top"><div class="brand"><div class="mark"></div><div class="word">Pace <span>Match</span></div></div></div>
+    <div class="hero"><p>Quem corre, perto de você.</p></div>
+    <div class="pad">
+      <p class="lede">É um app de namoro no modelo do Tinder, só para o público de corrida. A pessoa entra com foto e GPS. Pace, prova e quilometragem não são pré-requisito.</p>
+      <div class="chips"><span class="chip">foto</span><span class="chip">mesma região</span><span class="chip">like mútuo</span><span class="chip">corrida opcional</span></div>
+    </div>
+    <div class="dock"><button class="primary" style="flex:1" onclick="go('onboard')">Usar minha localização</button></div>
+  </section>
+
+  <section class="screen" id="onboard">
+    <div class="top"><div class="brand"><div class="mark"></div><div class="word">Onde você está</div></div></div>
+    <div class="pad">
+      <h1>O deck segue o GPS.</h1>
+      <p class="lede">Igual ao Tinder: você define o raio. Quem está fora não aparece. Nada de ficha de corrida para liberar o app.</p>
+      <div class="loc"><span class="pulse"></span><div><b id="place">Pinheiros, São Paulo</b><br><span class="hint">localização simulada do celular</span></div></div>
+      <div style="margin-top:22px"><label>Raio de descoberta · <span id="radiusLabel">15 km</span></label><input id="radius" type="range" min="2" max="50" value="15" oninput="setRadius(this.value)" /></div>
+      <p class="hint" id="radiusHint"></p>
+    </div>
+    <div class="dock"><button class="secondary" onclick="go('splash')">Voltar</button><button class="primary" style="flex:1" onclick="enterDeck()">Ver gente perto</button></div>
+  </section>
+
+  <section class="screen" id="discover">
+    <div class="top"><div class="brand"><div class="mark"></div><div class="word">Pace <span>Match</span></div></div><button class="ghost" id="radiusBtn" onclick="go('onboard')">15 km</button></div>
+    <div class="deck" id="deck"></div>
+    <div class="actions">
+      <button class="round undo" onclick="undo()" aria-label="Desfazer">↩</button>
+      <button class="round" onclick="swipe('pass')" aria-label="Passar">✕</button>
+      <button class="round super" onclick="swipe('super')" aria-label="Super like">★</button>
+      <button class="round like" onclick="swipe('like')" aria-label="Curtir">♥</button>
+    </div>
+    <nav class="nav"></nav>
+  </section>
+
+  <section class="screen" id="matches">
+    <div class="top"><div class="word">Matches</div></div>
+    <div class="pad">
+      <div class="tabs">
+        <button class="chip on" id="tabMatch" onclick="showMatchTab('matches')">Mútuos</button>
+        <button class="chip" id="tabSent" onclick="showMatchTab('sent')">Enviados</button>
+      </div>
+      <div id="matchList"></div>
+    </div>
+    <nav class="nav"></nav>
+  </section>
+
+  <section class="screen" id="runs">
+    <div class="top"><div class="word">Chat</div></div>
+    <div class="pad" id="runList"></div>
+    <nav class="nav"></nav>
+  </section>
+
+  <section class="screen" id="me">
+    <div class="top"><div class="word">Você</div><button class="ghost" onclick="go('discover')">Deck</button></div>
+    <div class="me-card" id="meCard"></div>
+    <div class="pad">
+      <p class="kicker">Sem pré-requisito</p>
+      <p class="lede">Conta comum: foto, idade e GPS. Correr é o recorte do app, não uma prova de entrada. Quem quiser escreve no perfil que corre; quem não quiser, só aparece.</p>
+      <button class="secondary" onclick="resetDemo()">Recomeçar demo</button>
+    </div>
+    <nav class="nav"></nav>
+  </section>
+
+  <section class="sheet" id="detail"></section>
+  <section class="sheet" id="chat"></section>
+  <div class="match" id="match"></div>
+</div>
+<script>
+const PHOTOS = {
+  marina: "imagine_images/d486O.jpg", lucas: "imagine_images/khSK2.jpg", amina: "imagine_images/hY50J.jpg",
+  clara: "imagine_images/7oEfm.jpg", kenji: "imagine_images/QKHjj.jpg", lia: "imagine_images/9ADRT.jpg",
+  hero: "imagine_images/RMNJN.jpg"
+};
+const me = { lat: -23.567, lng: -46.692, city: "Pinheiros, São Paulo", radius: 15 };
+const people = [
+  { id:"marina", name:"Marina Alves", age:29, area:"Vila Madalena", km:1.4, bio:"Mora aqui perto. Corre às vezes de manhã, mas entrou no app para conhecer gente, não para preencher planilha.", note:"corre às vezes", likesYou:true },
+  { id:"lucas", name:"Lucas Mendes", age:31, area:"Urca", km:6.8, bio:"Foto, orla e zero ficha técnica. Se rolar match, a conversa começa pelo normal.", note:"", likesYou:false },
+  { id:"amina", name:"Amina Costa", age:27, area:"Rio Vermelho", km:28, bio:"Está na cidade por um tempo. Sem pace cadastrado. O filtro é a distância.", note:"", likesYou:true },
+  { id:"clara", name:"Clara Viana", age:28, area:"Pacaembu", km:3.1, bio:"Gosta de trilha no fim de semana. Não colocou tempo, distância nem prova.", note:"trilha no fim de semana", likesYou:false },
+  { id:"kenji", name:"Kenji Sato", age:32, area:"Santos", km:18, bio:"Perfil comum. A única exigência do app foi a localização do celular.", note:"", likesYou:false },
+  { id:"lia", name:"Lia Ferreira", age:29, area:"Barra Funda", km:4.6, bio:"Corre, mas isso não é pré-requisito. O que decide o match é se os dois se curtiram.", note:"", likesYou:true }
+];
+let queue = [], history = [], sent = [], matches = [], chats = {}, currentChat = null, matchTab = "matches", busy = false;
+
+function nearby() { return people.filter(p => p.km <= me.radius).sort((a,b) => a.km - b.km); }
+function person(id) { return people.find(p => p.id === id); }
+function kmLabel(km) { return km < 1 ? Math.round(km * 1000) + " m" : km.toFixed(1).replace(".", ",") + " km"; }
+
+function go(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("on"));
+  document.getElementById(id).classList.add("on");
+  document.querySelectorAll(".sheet").forEach(s => s.classList.remove("on"));
+  if (id === "discover") renderDeck();
+  if (id === "matches") renderMatches();
+  if (id === "runs") renderChats();
+  if (id === "me") renderMe();
+  if (id === "onboard") setRadius(me.radius);
+  paintNav(id);
+}
+function paintNav(active) {
+  const items = [["discover","Perto",icon("pin"),0],["matches","Matches",icon("heart"),matches.length],["runs","Chat",icon("chat"),Object.keys(chats).length],["me","Você",icon("user"),0]];
+  document.querySelectorAll(".nav").forEach(nav => {
+    nav.innerHTML = items.map(([id,label,svg,n]) => `<button class="${active===id?"on":""}" onclick="go('${id}')">${svg}${n?`<span class="dot">${n}</span>`:""}<span>${label}</span></button>`).join("");
+  });
+}
+function icon(name) {
+  const p = { pin:'<path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.2"/>', heart:'<path d="M12 19s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z"/>', chat:'<path d="M5 6h14v9H8l-3 3z"/>', user:'<circle cx="12" cy="8" r="3.2"/><path d="M5 19c1.4-3 3.8-4.5 7-4.5S17.6 16 19 19"/>' };
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">${p[name]}</svg>`;
+}
+function setRadius(v) {
+  me.radius = +v;
+  const el = document.getElementById("radius");
+  if (el) el.value = v;
+  const label = document.getElementById("radiusLabel");
+  if (label) label.textContent = v + " km";
+  const hint = document.getElementById("radiusHint");
+  if (hint) hint.textContent = nearby().length + " pessoas dentro deste raio. Fora dele, o card nem entra na fila.";
+  const btn = document.getElementById("radiusBtn");
+  if (btn) btn.textContent = v + " km";
+}
+function enterDeck() {
+  queue = nearby().map(p => p.id);
+  history = []; sent = []; matches = []; chats = {};
+  go("discover");
+}
+function cardHTML(p, back) {
+  const note = p.note ? `<span class="stat">${p.note}</span>` : `<span class="stat">sem ficha de corrida</span>`;
+  return `<article class="card ${back?"back":"top"}" data-id="${p.id}">
+    <img class="photo" src="${PHOTOS[p.id]}" alt="${p.name}" /><div class="veil"></div>
+    <div class="stamp like">Like</div><div class="stamp nope">Nope</div><div class="stamp super">Super</div>
+    <div class="badge">${kmLabel(p.km)}</div>
+    <div class="meta"><h2>${p.name.split(" ")[0]}, ${p.age}</h2><div class="sub">${p.area} · perto de você</div><div class="stats">${note}</div></div>
+  </article>`;
+}
+function renderDeck() {
+  const deck = document.getElementById("deck");
+  queue = queue.filter(id => person(id).km <= me.radius);
+  if (!queue.length) {
+    deck.innerHTML = `<div class="empty">Ninguém neste raio de ${me.radius} km.<br>Aumente a distância, como no Tinder.</div>`;
+    return;
+  }
+  const top = person(queue[0]), next = queue[1] ? person(queue[1]) : null;
+  deck.innerHTML = (next ? cardHTML(next, true) : "") + cardHTML(top, false);
+  bindSwipe(deck.querySelector(".top"));
+}
+function bindSwipe(card) {
+  let x0 = null, y0 = null, dx = 0, dy = 0;
+  const like = card.querySelector(".stamp.like"), nope = card.querySelector(".stamp.nope"), sup = card.querySelector(".stamp.super");
+  card.addEventListener("pointerdown", e => { x0 = e.clientX; y0 = e.clientY; card.setPointerCapture(e.pointerId); });
+  card.addEventListener("pointermove", e => {
+    if (x0 == null) return;
+    dx = e.clientX - x0; dy = e.clientY - y0;
+    card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx/18}deg)`;
+    like.style.opacity = Math.max(0, dx / 120);
+    nope.style.opacity = Math.max(0, -dx / 120);
+    sup.style.opacity = Math.max(0, -dy / 140);
+  });
+  card.addEventListener("pointerup", () => {
+    if (Math.abs(dy) > 120 && dy < 0 && Math.abs(dy) > Math.abs(dx)) return swipe("super");
+    if (dx > 110) return swipe("like");
+    if (dx < -110) return swipe("pass");
+    card.style.transform = "";
+    like.style.opacity = nope.style.opacity = sup.style.opacity = 0;
+    x0 = null; dx = 0;
+  });
+  card.addEventListener("click", () => { if (Math.abs(dx) < 6) openDetail(card.dataset.id); });
+}
+function swipe(kind) {
+  if (busy || !queue.length) return;
+  const card = document.querySelector("#deck .top");
+  if (!card) return;
+  busy = true;
+  card.querySelector(kind === "pass" ? ".stamp.nope" : kind === "super" ? ".stamp.super" : ".stamp.like").style.opacity = 1;
+  card.style.transition = "transform .28s ease";
+  card.style.transform = `translate(${kind==="pass"?-520:kind==="like"?520:0}px, ${kind==="super"?-640:30}px) rotate(${kind==="pass"?-18:16}deg)`;
+  setTimeout(() => { commit(kind); busy = false; }, 260);
+}
+function commit(kind) {
+  const id = queue.shift();
+  history.push({ id, kind });
+  const p = person(id);
+  if (kind === "like" || kind === "super") {
+    sent.push({ id, kind });
+    if (p.likesYou) { matches.push(id); chats[id] = []; showMatch(p, kind); }
+  }
+  renderDeck();
+  paintNav("discover");
+}
+function undo() {
+  if (!history.length || busy) return;
+  const last = history.pop();
+  queue.unshift(last.id);
+  sent = sent.filter(s => s.id !== last.id);
+  matches = matches.filter(id => id !== last.id);
+  delete chats[last.id];
+  closeMatch();
+  renderDeck();
+  paintNav("discover");
+}
+function showMatch(p) {
+  const box = document.getElementById("match");
+  box.classList.add("on");
+  box.innerHTML = `<div class="pair"><img src="${PHOTOS[p.id]}" alt="" /><img src="${PHOTOS.hero}" alt="" /></div>
+    <div class="kicker">é um match</div>
+    <h3>Você e ${p.name.split(" ")[0]} se curtiram</h3>
+    <p class="lede">${kmLabel(p.km)} de você. Os dois deram like. Corrida não entrou na conta.</p>
+    <button class="primary" style="width:100%;margin-bottom:10px" onclick="openChat('${p.id}')">Mandar mensagem</button>
+    <button class="secondary" style="width:100%" onclick="closeMatch()">Continuar</button>`;
+}
+function closeMatch(){ document.getElementById("match").classList.remove("on"); }
+function openDetail(id) {
+  const p = person(id);
+  document.getElementById("detail").classList.add("on");
+  document.getElementById("detail").innerHTML = `<div class="cover"><img src="${PHOTOS[p.id]}" alt="${p.name}" /><button class="back" onclick="closeSheets()">←</button></div>
+    <div class="body"><div class="kicker">${kmLabel(p.km)} · ${p.area}</div>
+    <h1 style="font-size:36px;margin-top:6px">${p.name}, ${p.age}</h1>
+    <p class="lede">${p.bio}</p>
+    <div class="stats"><span class="stat">${p.note || "sem dado de corrida"}</span><span class="stat">GPS ativo</span></div>
+    <div class="dock" style="position:static;margin-top:18px"><button class="secondary" onclick="closeSheets();swipe('pass')">Nope</button><button class="primary" style="flex:1" onclick="closeSheets();swipe('like')">Like</button></div></div>`;
+}
+function closeSheets(){ document.querySelectorAll(".sheet").forEach(s => s.classList.remove("on")); closeMatch(); }
+function showMatchTab(tab) {
+  matchTab = tab;
+  document.getElementById("tabMatch").classList.toggle("on", tab==="matches");
+  document.getElementById("tabSent").classList.toggle("on", tab==="sent");
+  renderMatches();
+}
+function renderMatches() {
+  const box = document.getElementById("matchList");
+  const rows = matchTab === "sent" ? sent.map(s => s.id) : matches;
+  if (!rows.length) { box.innerHTML = `<div class="empty">${matchTab==="sent"?"Nenhuma curtida enviada.":"Match só quando os dois curtem. Distância aproxima; like confirma."}</div>`; return; }
+  box.innerHTML = `<div class="list">${rows.map(id => {
+    const p = person(id); const mutual = matches.includes(id);
+    return `<button class="person" onclick="${mutual?`openChat('${id}')`:""}"><img src="${PHOTOS[id]}" alt="" /><span><b>${p.name}</b><small>${kmLabel(p.km)} · ${p.area}${mutual?" · match":""}</small></span><span class="score">${mutual?"match":"…"}</span></button>`;
+  }).join("")}</div>`;
+}
+function renderChats() {
+  const box = document.getElementById("runList");
+  if (!matches.length) { box.innerHTML = `<div class="empty">Chat abre depois do match mútuo.</div>`; return; }
+  box.innerHTML = `<div class="list">${matches.map(id => {
+    const p = person(id); const last = (chats[id]||[]).at(-1);
+    return `<button class="person" onclick="openChat('${id}')"><img src="${PHOTOS[id]}" alt="" /><span><b>${p.name.split(" ")[0]}</b><small>${last?last.text:"A " + kmLabel(p.km) + " de você"}</small></span></button>`;
+  }).join("")}</div>`;
+}
+function renderMe() {
+  document.getElementById("meCard").innerHTML = `<div class="kicker">GPS do celular</div><div class="big">${me.city.split(",")[0]}</div><p class="hint">Raio de ${me.radius} km · perfil comum, sem pace obrigatório<br>${sent.length} likes enviados · ${matches.length} matches</p>`;
+}
+function openChat(id) {
+  closeMatch(); currentChat = id; const p = person(id); if (!chats[id]) chats[id] = [];
+  document.getElementById("chat").classList.add("on");
+  document.getElementById("chat").innerHTML = `<div class="top"><button class="ghost" onclick="closeSheets()">Fechar</button><div class="word">${p.name.split(" ")[0]}</div><span class="score">${kmLabel(p.km)}</span></div>
+    <div class="pad">${chats[id].map(m => `<div class="bubble ${m.from==="me"?"me":""}">${m.text}</div>`).join("") || `<div class="empty">Vocês se curtiram e estão perto. A primeira mensagem é sua.</div>`}</div>
+    <div class="composer"><input id="msg" placeholder="Mensagem" /><button class="primary" onclick="send()">Enviar</button></div>`;
+}
+function send() {
+  const text = document.getElementById("msg").value.trim();
+  if (!text || !currentChat) return;
+  chats[currentChat].push({ from:"me", text });
+  chats[currentChat].push({ from:"them", text:"Oi. Também estou por aqui. Se quiser, a gente se vê — correr junto é convite, não regra." });
+  openChat(currentChat);
+}
+function resetDemo() { me.radius = 15; queue = []; history = []; sent = []; matches = []; chats = {}; closeMatch(); go("splash"); }
+setRadius(15);
+paintNav("splash");
+</script>
+</body>
+</html>
