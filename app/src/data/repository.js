@@ -10,13 +10,13 @@ export function createRepository() {
 }
 
 function localRepository() {
-  const load = () => JSON.parse(localStorage.getItem("pace.session") || "null");
+  const load = () => ({ me: null, sent: [], passes: [], matches: [], chats: {}, blocked: [], reports: [], ...JSON.parse(localStorage.getItem("pace.session") || "{}") });
   const save = (state) => localStorage.setItem("pace.session", JSON.stringify(state));
   return {
     mode: "local",
     async deck(me) {
       return demoProfiles
-        .filter(p => passesHardFilters(me, p, me.blocked || []))
+        .filter(p => passesHardFilters(me, p, [...(me.blocked || []), ...(state.passes || [])]))\n        .filter(p => !(state.matches || []).find(m => m.id === p.id))
         .map(p => ({ ...toPublicProfile(p), score: paceScore(me, p), likesYou: p.likesYou }))
         .sort((a, b) => b.score - a.score);
     },
