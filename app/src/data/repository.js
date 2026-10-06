@@ -147,7 +147,7 @@ function supabaseRepository(supabase) {
       if (error) throw error;
       return (data || []).map(p => ({
         ...p,
-        photo: p.photo_url,
+        photo: p.photo_path ? supabase.storage.from("profile-photos").getPublicUrl(p.photo_path).data.publicUrl : "",
         area: p.area_label || "perto de você",
         score: null,
         likesYou: false
