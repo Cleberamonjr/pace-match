@@ -56,7 +56,7 @@ export default function App() {
       track("match_created");
       const nextMatches = [...matches, person];
       setMatches(nextMatches);
-      await repo.saveMatches(nextMatches);
+      
       setMatch(person);
     }
   }
