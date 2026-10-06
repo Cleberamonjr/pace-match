@@ -31,7 +31,7 @@ function birthDateFromAge(age) {
   return d.toISOString().slice(0, 10);
 }
 
-async function supabaseRepository(supabase) {
+function supabaseRepository(supabase) {
   const current = async () => {
     const { data, error } = await supabase.auth.getSession();
     if (error) throw error;
@@ -66,7 +66,7 @@ async function supabaseRepository(supabase) {
           sport: sport?.sport ?? "",
           frequency: sport?.frequency ?? "",
           gps: true,
-          photos: photos || []
+          photos: (photos || []).map(ph => ({ ...ph, public_url: supabase.storage.from("profile-photos").getPublicUrl(ph.storage_path).data.publicUrl }))
         },
         matches: []
       };
