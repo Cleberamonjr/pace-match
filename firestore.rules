@@ -1,0 +1,78 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isMatchParty(matchId) {
+      return signedIn()
+        && request.auth.uid in get(/databases/$(database)/documents/matches/$(matchId)).data.userIds;
+    }
+
+    match /profiles/{uid} {
+      allow read: if signedIn();
+      allow create, update: if isSelf(uid);
+      allow delete: if false;
+    }
+
+    match /preferences/{uid} {
+      allow read, write: if isSelf(uid);
+    }
+
+    match /photos/{photoId} {
+      allow read: if signedIn();
+      allow create, update, delete: if signedIn() && request.resource.data.userId == request.auth.uid;
+    }
+
+    match /likes/{likeId} {
+      allow read: if signedIn() && resource.data.fromUser == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.fromUser == request.auth.uid;
+      allow update, delete: if signedIn() && resource.data.fromUser == request.auth.uid;
+    }
+
+    match /passes/{passId} {
+      allow read: if signedIn() && resource.data.fromUser == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.fromUser == request.auth.uid;
+      allow update, delete: if signedIn() && resource.data.fromUser == request.auth.uid;
+    }
+
+    match /matches/{matchId} {
+      allow read: if signedIn() && request.auth.uid in resource.data.userIds;
+      allow create: if signedIn()
+        && request.auth.uid in request.resource.data.userIds
+        && request.resource.data.userIds.size() == 2;
+      allow update, delete: if false;
+    }
+
+    match /matches/{matchId}/messages/{messageId} {
+      allow read: if isMatchParty(matchId);
+      allow create: if isMatchParty(matchId)
+        && request.resource.data.senderId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    match /blocks/{blockId} {
+      allow read: if signedIn() && resource.data.blockerId == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.blockerId == request.auth.uid;
+      allow delete: if signedIn() && resource.data.blockerId == request.auth.uid;
+      allow update: if false;
+    }
+
+    match /reports/{reportId} {
+      allow create: if signedIn() && request.resource.data.reporterId == request.auth.uid;
+      allow read, update, delete: if false;
+    }
+
+    match /analytics/{eventId} {
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if false;
+    }
+  }
+}
