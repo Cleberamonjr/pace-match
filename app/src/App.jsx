@@ -24,7 +24,7 @@ export default function App() {
   const [matches, setMatches] = useState([]);
   const [error, setError] = useState("");
 
-  useEffect(() => { track("signup_started"); }, []);
+  useEffect(() => { (async () => { const session = await repo.session(); if (session) { setMe({ ...empty, ...session.me }); setMatches(session.matches || []); setReady(true); } else track("signup_started"); })(); }, [repo]);
 
   async function refresh(next = me) {
     const deck = await repo.deck({ ...next, hobbies: next.hobbies.split(",").map(s => s.trim()).filter(Boolean) });
@@ -45,7 +45,7 @@ export default function App() {
   async function act(person, kind) {
     track(kind === "pass" ? "pass_sent" : kind === "super" ? "superlike_sent" : "like_sent");
     setPeople(list => list.slice(1));
-    if (kind === "pass") return;
+    if (kind === "pass") { await repo.pass(person.id); return; }
     const result = await repo.like(me, person, kind);
     if (result.matched) {
       track("match_created");
